@@ -1,5 +1,5 @@
-#ifndef DATABASE_H
-#define DATABASE_H
+#ifndef DATABASE_HPP
+#define DATABASE_HPP
 
 #include <iostream>
 #include <rocksdb/db.h>
@@ -13,13 +13,13 @@ public:
     Database();
     ~Database();
 
-    void add_node(const Node& node);
+    /*void add_node(const Node& node);
     void add_relation(const Relationship& rel);
     void add_adj_list(const Adjacency& adj);
 
     Node get_node(const std::string& id);
     Relationship get_relation(const std::string& id_src, std::string& rel_label, std::string& id_dest);
-    Adjacency get_adj_list(const std::string& id_src);
+    Adjacency get_adj_list(const std::string& id_src);*/
 
 private:
     rocksdb::DB* db;
