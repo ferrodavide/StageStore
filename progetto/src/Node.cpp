@@ -2,36 +2,29 @@
 #include <iostream>
 #include <vector>
 
+//default constructor
 Node::Node() : id(""), label("") {}
 
-// Costruttore
+// constructor
 Node::Node(const std::string& id, const std::string& label)
     : id(id), label(label) {}
 
-// Imposta una proprietà del nodo
+// set a property
 void Node::set_property(const std::string& key, const std::string& value) {
     properties[key] = value;
 }
 
-// Restituisce una proprietà del nodo
-/*std::string Node::get_property(const std::string& key) const {
-    auto it = properties.find(key);
-    if (it != properties.end()) {
-        return it->second;
-    }
-    return "";
-}*/
-
-// Restituisce l'ID del nodo
+// return node ID
 std::string Node::get_id() const {
     return id;
 }
 
-// Restituisce l'etichetta del nodo
+//return node label
 std::string Node::get_label() const {
     return label;
 }
 
+//return the unordered map
 std::unordered_map<std::string, std::string> Node::get_properties() const {
     return properties;
 }

@@ -7,11 +7,11 @@ Database::Database(){
     if (!status.ok()) {
         std::cerr << "Error opening database: " << status.ToString() << std::endl;
     }
-    // Creare un iteratore per scorrere tutte le chiavi
+    //create an iterator to iterate through all the keys
     rocksdb::Iterator* it = db->NewIterator(rocksdb::ReadOptions());
     for (it->SeekToFirst(); it->Valid(); it->Next()) {
         std::string key = it->key().ToString();
-        // Cancellare la chiave
+        //delete the key
         status = db->Delete(rocksdb::WriteOptions(), key);
         if (!status.ok()) {
             std::cerr << "Errore durante la cancellazione di " << key << ": " << status.ToString() << std::endl;
@@ -33,14 +33,15 @@ void Database::print(){
 
 void Database::add_node(const Node& node){
 
-    nodes[node.get_id()] = node;
+    nodes[node.get_id()] = node;    //insert node into nodes
     std::string key = node.get_id();
-    std::string value = node.get_label() + " | "; // Inizia con l'etichetta
-
+    std::string value = node.get_label() + " | ";
+    //iterate through the properties and concatenate them to value
     for (const auto& prop : node.get_properties()) {
-        value += prop.first + " = " + prop.second + "; "; // Formato chiave=valore
+        value += prop.first + " = " + prop.second + "; ";
     }
 
+    //adds the record into the db
     rocksdb::Status status = db->Put(rocksdb::WriteOptions(), key, value);
     if (!status.ok()) {
         std::cerr << "Error saving node to database: " << status.ToString() << std::endl;
