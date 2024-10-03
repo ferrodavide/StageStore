@@ -4,29 +4,21 @@
 #include <string>
 #include <unordered_map>
 
+
 class Node {
 public:
-    // Costruttore per creare un nodo con un id passato
-    Node(const std::string& id);
-
-    // Metodo per ottenere l'id del nodo
-    std::string get_id() const;
-
-    // Metodo per aggiungere una proprietà al nodo
-    void add_property(const std::string& key, const std::string& value);
-
-    // Metodo per ottenere il valore di una proprietà di un nodo, data la sua key
+    Node(const std::string& id, const std::string& label);
+    void set_property(const std::string& key, const std::string& value);
     std::string get_property(const std::string& key) const;
-
-    // Metodo per rimuovere una proprietà di un nodo, data la sua key
-    void remove_property(const std::string& key);
-
-    // Metodo per stampare tutte le proprietà del nodo
-    void print_properties() const;
-
+    
+    // Aggiungi questi metodi
+    std::string get_id() const { return id; }
+    std::string get_label() const { return label; }
+    
 private:
-    std::string id;  // Identificatore univoco del nodo
-    std::unordered_map<std::string, std::string> properties;  // Unordered_map chiave-valore per memorizzare le proprietà
+    std::string id;
+    std::string label;
+    std::unordered_map<std::string, std::string> properties; // Proprietà del nodo
 };
 
 #endif 
