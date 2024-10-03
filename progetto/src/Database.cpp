@@ -38,7 +38,7 @@ void Database::add_node(const Node& node){
     std::string value = node.get_label() + " | "; // Inizia con l'etichetta
 
     for (const auto& prop : node.get_properties()) {
-        value += prop.first + " = " + prop.second + "\n"; // Formato chiave=valore
+        value += prop.first + " = " + prop.second + "; "; // Formato chiave=valore
     }
 
     rocksdb::Status status = db->Put(rocksdb::WriteOptions(), key, value);
@@ -46,6 +46,5 @@ void Database::add_node(const Node& node){
         std::cerr << "Error saving node to database: " << status.ToString() << std::endl;
     }
 }
-
 
     

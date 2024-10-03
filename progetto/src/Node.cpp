@@ -35,5 +35,3 @@ std::string Node::get_label() const {
 std::unordered_map<std::string, std::string> Node::get_properties() const {
     return properties;
 }
-
-

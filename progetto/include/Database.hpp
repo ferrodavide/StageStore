@@ -16,10 +16,10 @@ public:
 
     void add_node(const Node& node);
     /*void add_relation(const Relationship& rel);
-    void add_adj_list(const Adjacency& adj);
+    void add_adj_list(const Adjacency& adj);*/
 
-    Node get_node(const std::string& id);
-    Relationship get_relation(const std::string& id_src, std::string& rel_label, std::string& id_dest);
+    //Node get_node(const std::string& id);
+    /*Relationship get_relation(const std::string& id_src, std::string& rel_label, std::string& id_dest);
     Adjacency get_adj_list(const std::string& id_src);*/
 
     void print();

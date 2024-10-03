@@ -11,7 +11,7 @@ int main(int argc, char const *argv[])
     node1.set_property("age", "22");
 
     data.add_node(node1);
-    
+
     data.print();
     return 0;
 }
