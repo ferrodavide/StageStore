@@ -22,6 +22,7 @@ public:
     Relationship get_relation(const std::string& id_src, std::string& rel_label, std::string& id_dest);
     Adjacency get_adj_list(const std::string& id_src);*/
 
+    void print();
 private:
     rocksdb::DB* db;
     rocksdb::Options options;

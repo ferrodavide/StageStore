@@ -1,6 +1,7 @@
 #include "Node.hpp"
 #include <iostream>
 
+Node::Node() : id(""), label("") {}
 
 // Costruttore
 Node::Node(const std::string& id, const std::string& label)

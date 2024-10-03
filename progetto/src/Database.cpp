@@ -7,31 +7,41 @@ Database::Database(){
     if (!status.ok()) {
         std::cerr << "Error opening database: " << status.ToString() << std::endl;
     }
+    // Creare un iteratore per scorrere tutte le chiavi
+    rocksdb::Iterator* it = db->NewIterator(rocksdb::ReadOptions());
+    for (it->SeekToFirst(); it->Valid(); it->Next()) {
+        std::string key = it->key().ToString();
+        // Cancellare la chiave
+        status = db->Delete(rocksdb::WriteOptions(), key);
+        if (!status.ok()) {
+            std::cerr << "Errore durante la cancellazione di " << key << ": " << status.ToString() << std::endl;
+        }
+    }
+    delete it;
 }
 
 Database::~Database(){ delete db; } //closing the database
 
-void Database::add_node(const Node& node){
-    //check if the node already exists
-    if(nodes.find(node.get_id() != nodes.end())){
-        std::cerr<<"Node with ID "<<node.get_id()<<" already exists."<<std::endl;
-        return;
+void Database::print(){
+    rocksdb::Iterator* it = db->NewIterator(rocksdb::ReadOptions());
+    for (it->SeekToFirst(); it->Valid(); it->Next()) {
+            std::cout << it->key().ToString() << ": " << it->value().ToString() << std::endl;
     }
-
-    nodes[node.get_id()] = node; //add the node to the unordered map
-
-    //save the node into RocksDB
-    std::string key = node.get_id();    
-    std::string value = node.get_label();
-
-    rocksdb::Status status = db->Put(rocksdb::WriteOptions(), key, value);
-    if(!status.ok()){
-        std::cerr<<"Error saving node to database: "<<status.toString()<<std::endl;
-    }else{
-        std::cout<<"Node with ID"<<key<<" added succesfully."<<std::endl;
-    }
+    assert(it->status().ok());
+    delete it;
 }
 
+void Database::add_node(const Node& node){
+
+    nodes[node.get_id()] = node;
+    std::string key = node.get_id();
+    std::string value = node.get_label(); // Potresti voler serializzare anche le proprietà del nodo
+
+    rocksdb::Status status = db->Put(rocksdb::WriteOptions(), key, value);
+    if (!status.ok()) {
+        std::cerr << "Error saving node to database: " << status.ToString() << std::endl;
+    }
+}
 
 
     

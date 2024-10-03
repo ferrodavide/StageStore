@@ -7,6 +7,7 @@
 
 class Node {
 public:
+    Node();
     Node(const std::string& id, const std::string& label);
     void set_property(const std::string& key, const std::string& value);
     std::string get_property(const std::string& key) const;
