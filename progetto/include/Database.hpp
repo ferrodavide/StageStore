@@ -4,6 +4,7 @@
 #include <iostream>
 #include <rocksdb/db.h>
 #include <rocksdb/options.h>
+#include <unordered_map>
 #include "Node.hpp"
 #include "Relationship.hpp"
 #include "Adjacency_List.hpp"
@@ -13,8 +14,8 @@ public:
     Database();
     ~Database();
 
-    /*void add_node(const Node& node);
-    void add_relation(const Relationship& rel);
+    void add_node(const Node& node);
+    /*void add_relation(const Relationship& rel);
     void add_adj_list(const Adjacency& adj);
 
     Node get_node(const std::string& id);
@@ -24,6 +25,7 @@ public:
 private:
     rocksdb::DB* db;
     rocksdb::Options options;
+    std::unordered_map<std::string, Node> nodes;
 };
 
 #endif
