@@ -12,8 +12,8 @@ public:
     std::string get_property(const std::string& key) const;
     
     // Aggiungi questi metodi
-    std::string get_id() const { return id; }
-    std::string get_label() const { return label; }
+    std::string get_id() const;
+    std::string get_label() const;
     
 private:
     std::string id;
