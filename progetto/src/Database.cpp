@@ -35,7 +35,11 @@ void Database::add_node(const Node& node){
 
     nodes[node.get_id()] = node;
     std::string key = node.get_id();
-    std::string value = node.get_label(); // Potresti voler serializzare anche le proprietà del nodo
+    std::string value = node.get_label() + " | "; // Inizia con l'etichetta
+
+    for (const auto& prop : node.get_properties()) {
+        value += prop.first + " = " + prop.second + "\n"; // Formato chiave=valore
+    }
 
     rocksdb::Status status = db->Put(rocksdb::WriteOptions(), key, value);
     if (!status.ok()) {
