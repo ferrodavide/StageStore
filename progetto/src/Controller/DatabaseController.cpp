@@ -102,16 +102,16 @@ void Database::add_relation(const Relationship& rel) {
     }
     
     for(int i=0;i<prop_name.size();i++){
-        list.set_adj_list_relationship(rel.get_key_dest(), lab_dest, rel.get_key_lab(), prop_name[i], prop_value[i]);
-        add_adj_list(list,rel.get_key_dest(), lab_dest, rel.get_key_lab(), prop_name[i], prop_value[i]);
+        list.set_adj_list_relationship(rel.get_key_src(),rel.get_key_dest(), lab_dest, rel.get_key_lab(), prop_name[i], prop_value[i]);
+        add_adj_list(rel.get_key_src(), rel.get_key_dest(), lab_dest, rel.get_key_lab(), prop_name[i], prop_value[i]);
     }
     //list.print();
     //add_adj_list(list);
 }
 
 //ADD ADJ
-void Database::add_adj_list(Adjacency_List adj,string id_d, string label_dest, string label_rel, string prop_name, string prop_val){
-    std::string key = "a:" + adj.get_id_src();
+void Database::add_adj_list(std::string src, string id_d, string label_dest, string label_rel, string prop_name, string prop_val){
+    std::string key = "a:" + src;
     string check;
     rocksdb::Status status = db->Get(rocksdb::ReadOptions(), key, &check);
     
@@ -153,36 +153,7 @@ void Database::add_adj_list(Adjacency_List adj,string id_d, string label_dest, s
         }
     }
 }
-/*
-void Database::add_adj_list(const Adjacency_List& adj){
-    std::string key = "a:" + adj.get_id_src();
-    std::cout<<"LA CHIAVE E':"<<key<<std::endl;
-    std::string value = adj.get_id_dest() + " [ ";
-    std::cout<<"IL VALUE E':"<<value<<std::endl;
 
-    for (const auto& dest_entry : adj.get_adj_list()) {
-        const std::string& label_dest = dest_entry.first; 
-        const auto& rel_map = dest_entry.second; 
-        std::cout<<"LABEL DEST E':"<<label_dest<<std::endl;
-        for (const auto& rel_entry : rel_map) {
-            const std::string& label_rel = rel_entry.first; 
-            const auto& prop_map = rel_entry.second; 
-            std::cout<<"LABEL REL E':"<<label_rel<<std::endl;
-            for (const auto& prop_entry : prop_map) {
-                const std::string& prop_name = prop_entry.first; 
-                const std::string& prop_value = prop_entry.second;
-                std::cout<<"PROP NAME E':"<<prop_name<<std::endl;
-                std::cout<<"PROP VALUE E':"<<prop_value<<std::endl;
-                value += label_dest + label_rel + prop_name + prop_value + " ]";
-                std::cout<<"VALUE E'"<<value<<std::endl;
-            }
-        }
-    }
-    
-    rocksdb::Status status = db->Put(rocksdb::WriteOptions(), key, value);
-    if(!status.ok()){
-        std::cerr<<"Error saving adjacency list to database: "<<status.ToString()<<std::endl;
-    }
+void Database::print_list(){
+    list.print();
 }
-
-*/

@@ -41,7 +41,7 @@ public:
     void add_node(const Node& node);
     void add_relation(const Relationship& rel);
     //void add_adj_list(const Adjacency_List& adj);
-    void add_adj_list(Adjacency_List adj,string id_dest ,string label_dest, string label_rel, string prop_name, string prop_val);   //prova
+    void add_adj_list(std::string src,string id_dest ,string label_dest, string label_rel, string prop_name, string prop_val);   //prova
 
     void update_node(const std::string& key,const std::string& value);
 
@@ -51,6 +51,7 @@ public:
     //Adjacency get_adj_list(const std::string& id_src);
 
     void print();
+    void print_list();
 private:
     rocksdb::DB* db;
     rocksdb::Options options;

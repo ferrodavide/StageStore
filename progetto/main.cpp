@@ -1,11 +1,11 @@
-/*#include "src/Entity/Database.hpp"
+#include "src/Entity/Database.hpp"
 #include <iostream>
 
 int main(int argc, char const *argv[])
 {
-    Crea un'istanza del database
     Database data;
-    
+    //Adjacency_List lista;
+
     Node node1("1", "Person");
     node1.set_property("name", "Matteo");
     node1.set_property("age", "22");
@@ -35,7 +35,7 @@ int main(int argc, char const *argv[])
     r1.set_property("play","basketball");
     Relationship r5("1","WORKS_WITH", "2");
     r5.set_property("as","driver");
-    Relationship r2("4","EATS_WITH","3");
+   /* Relationship r2("4","EATS_WITH","3");
     r2.set_property("for","2 hours");
     r2.set_property("eating","pizza");
     Relationship r3("5","IS_FRIEND_WITH","3");
@@ -43,15 +43,17 @@ int main(int argc, char const *argv[])
     r3.set_property("from","school");
     Relationship r4("3","WORKS_WITH","4");
     r4.set_property("as","Developer");
-    
+    */
 
     data.add_relation(r1);
-    data.add_relation(r2);
+  /*  data.add_relation(r2);
     data.add_relation(r3);
     data.add_relation(r4);
+    */
     data.add_relation(r5);
-
-    data.print();
+    
+    //data.print();
+    data.print_list();
     std::cout<<std::endl;
     std::cout<<std::endl;
     std::cout<<std::endl;
@@ -59,9 +61,9 @@ int main(int argc, char const *argv[])
 
     
     return 0;
-}*/
+}
 
-#include "src/Entity/Database.hpp"
+/*#include "src/Entity/Database.hpp"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -127,3 +129,4 @@ int main(int argc, char const *argv[])
     return 0;
 }
 
+*/
