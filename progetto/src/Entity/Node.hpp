@@ -3,14 +3,17 @@
 
 #include <string>
 #include <unordered_map>
-
+#include <iostream>
 
 class Node {
 public:
-    Node();
-    Node(const std::string& id, const std::string& label);
-    void set_property(const std::string& key, const std::string& value);
+    //constructor
+    Node(const std::string& id, const std::string& label) : id(id), label(label) {}
     
+    //setter
+    void set_property(const std::string& key, const std::string& value);
+
+    //getters 
     std::string get_id() const;
     std::string get_label() const;
     std::unordered_map<std::string, std::string> get_properties() const;

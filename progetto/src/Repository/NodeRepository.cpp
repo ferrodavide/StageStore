@@ -1,13 +1,4 @@
-#include "Node.hpp"
-#include <iostream>
-#include <vector>
-
-//default constructor
-Node::Node() : id(""), label("") {}
-
-// constructor
-Node::Node(const std::string& id, const std::string& label)
-    : id(id), label(label) {}
+#include "src/Entity/Node.hpp"
 
 // set a property
 void Node::set_property(const std::string& key, const std::string& value) {
