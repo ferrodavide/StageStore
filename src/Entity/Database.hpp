@@ -19,7 +19,13 @@ public:
         if (!status.ok()) {
             std::cerr << "Error opening database: " << status.ToString() << std::endl;
         }
+    }
+    //destructor
+    ~Database(){ delete db; } //closing the database
+
+    void delete_db(){
         //create an iterator to iterate through all the keys
+        rocksdb::Status status;
         rocksdb::Iterator* it = db->NewIterator(rocksdb::ReadOptions());
         for (it->SeekToFirst(); it->Valid(); it->Next()) {
             std::string key = it->key().ToString();
@@ -31,9 +37,6 @@ public:
         }
         delete it;
     }
-    //destructor
-    ~Database(){ delete db; } //closing the database
-
     void delete_node(const std::string n_key);
     void delete_relationship(const std::string r_key);
     void delete_adjacency_list(const std::string al_key);
@@ -41,7 +44,7 @@ public:
     void add_node(const Node& node);
     void add_relation(const Relationship& rel);
     //void add_adj_list(const Adjacency_List& adj);
-    void add_adj_list(std::string src,string id_dest ,string label_dest, string label_rel, string prop_name, string prop_val);   //prova
+    void add_adj_list(std::string src,string id_d ,string label_dest, string label_rel, string prop_strings);   //prova
 
     void update_node(const std::string& key,const std::string& value);
 
@@ -52,6 +55,14 @@ public:
 
     void print();
     void print_list();
+
+    std::string query_get(const std::string& chiave){
+        std::string valore_nodo;
+        rocksdb::Status status = db->Get(rocksdb::ReadOptions(), chiave, &valore_nodo);
+
+        return valore_nodo;
+    }
+
 private:
     rocksdb::DB* db;
     rocksdb::Options options;

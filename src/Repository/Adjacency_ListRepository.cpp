@@ -8,42 +8,40 @@ std::vector<std::string> Adjacency_List::get_id_dest(const std::string& id_s) co
         current = current->next;
     }
 
-    if(!current){
-        std::vector<std::string> empty;
-        return empty;
-    } 
+    return vector<string>();
 }
 
-std::unordered_map<string, std::unordered_map<std::string, std::unordered_map<std::string, std::string>>> Adjacency_List::get_adj_list(const std::string& id_s) const{
+unordered_map<string, unordered_map<string, unordered_map<string, string>>> Adjacency_List::get_adj_list(const string& id_s) const{
     adj_p current = head;
     while(current){
         if(current->id_src == id_s) return current->adj_list;
         current = current->next;
     }
 
-    if(!current){
-        std::unordered_map<string, std::unordered_map<std::string, std::unordered_map<std::string, std::string>>> empty;
-        return empty;
-    } 
+    return unordered_map<string, unordered_map<string, unordered_map<string, string>>>();
 }
-void Adjacency_List::set_adj_list_node(string id_s){
+
+//setters
+void Adjacency_List::set_adj_list_node(const string& id_src){
     adj_p current = head;
     bool check = false;
     while(current && !check){
-        if(current->id_src == id_s) check = true;
+        if(current->id_src == id_src) check = true;
         current = current->next;
     }
 
     if(!check){
-        append(id_s);
+        append(id_src);
     }
 }
-void Adjacency_List::set_adj_list_relationship(std::string id_s,std::string id_d, std::string label_dest, std::string label_rel, std::string prop_name, std::string prop_val){
+
+void Adjacency_List::set_adj_list_relationship(const string& id_s, const string& id_dest, const string& label_dest, const string& label_rel, const string& prop_name, const string& prop_val){
     adj_p current = head;
     while(current){
         if(current->id_src == id_s){
-            current->id_dest.push_back(id_d);
+            current->id_dest.push_back(id_dest);
             current->adj_list[label_dest][label_rel][prop_name] = prop_val;
+            return;
         }
         current = current->next;
     }
@@ -64,12 +62,17 @@ void Adjacency_List::append(const std::string& id_s){
 //print the adj_list
 void Adjacency_List::print() const {
     adj_p current = head;
-    while(current){
-        std::cout<<"ID SORGENTE: "<<current->id_src<<std::endl;
-        for(int i = 0;i<current->id_dest.size();i++){
-            std::cout<<"ID DESTINAZIONI:"<<current->id_dest.at(i)<<"RELATIVI AL NODO SORGENTE: "<<current->id_src<<std::endl;
+    while (current) {
+        std::cout << "ID SORGENTE: " << current->id_src << std::endl;
+
+        // Itera e stampa gli ID di destinazione (unordered_set)
+        for (const auto& dest_id : current->id_dest) {
+            std::cout << "ID DESTINAZIONE: " << dest_id << " RELATIVO AL NODO SORGENTE: " << current->id_src << std::endl;
         }
-        std::cout<<"LISTA DI ADIACENZA:"<<std::endl;
+
+        std::cout << "LISTA DI ADIACENZA:" << std::endl;
+
+        // Itera e stampa la lista di adiacenza
         for (const auto& dest_entry : current->adj_list) {
             const std::string& label_dest = dest_entry.first;  // Label di destinazione
             const auto& rel_map = dest_entry.second;  // Mappa delle relazioni
@@ -92,4 +95,5 @@ void Adjacency_List::print() const {
         }
         current = current->next;
     }
-}  
+}
+

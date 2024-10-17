@@ -4,20 +4,14 @@
 #include <iostream>
 #include <string>
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 using namespace std;
 class Adjacency_List{
 public:
     //costructors
-    Adjacency_List (){
-        head = nullptr;
-        tail = nullptr;
-    };
-    Adjacency_List (string id_S){
-        head = nullptr;
-        tail = nullptr;
-    }
+    Adjacency_List (): head(nullptr), tail(nullptr) {}
     ~Adjacency_List(){
         adj_p current = head;
         while (current) {
@@ -30,12 +24,12 @@ public:
     }
 
     //setters
-    void set_adj_list_node(string id_src);
-    void set_adj_list_relationship(std::string id_s, std::string id_dest , std::string label_dest, std::string label_rel, std::string prop_name, std::string prop_val);
+    void set_adj_list_node(const string& id_src);
+    void set_adj_list_relationship(const string& id_s, const string& id_dest, const string& label_dest, const string& label_rel, const string& prop_name, const string& prop_val);
     
     //getters
     std::vector<std::string> get_id_dest(const std::string& id_s) const;
-    std::unordered_map<string, std::unordered_map<std::string, std::unordered_map<std::string, std::string>>> get_adj_list(const std::string& id_s) const;
+    unordered_map<string, unordered_map<string, unordered_map<string, string>>> get_adj_list(const string& id_s) const;
 
     void append(const std::string& id_s);
     void print() const;
