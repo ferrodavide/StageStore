@@ -6,7 +6,6 @@
 #include <set>      // for std::set
 #include <fstream>  // for file output
 #include <sstream>
-#include <tuple>    // for std::tuple
 
 // Function to generate a random name
 std::string generateRandomName() {
@@ -90,26 +89,28 @@ void writeUniqueRandomRelationsToCSV(const std::string& filename, int numRows, i
 
     // Continue generating relations until there are enough unique relations
     while (uniqueRelations.size() < static_cast<size_t>(numRows)) {
-        std::string relationString = generateRandomRelation(maxID);
-        std::stringstream ss(relationString);
-        int id1, id2;
-        std::string relation, role;
-        int since;
+        // Generate a random relation
+        int id1 = rand() % maxID + 1;
+        int id2;
+        do {
+            id2 = rand() % maxID + 1;
+        } while (id2 == id1); // Ensure id2 is different from id1
+        
+        std::vector<std::string> relations = {"KNOWS", "IS_FRIEND_OF", "LIKES", "FOLLOWS", "BLOCKS"};
+        std::string relation = relations[rand() % relations.size()];
+        
+        // Check if the tuple (id1, relation, id2) already exists in the set
+        std::tuple<int, std::string, int> key = std::make_tuple(id1, relation, id2);
+        if (uniqueKeys.find(key) == uniqueKeys.end()) {
+            // If it doesn't exist, add the key tuple to the set
+            uniqueKeys.insert(key);
 
-        // Parse the relation string
-        std::getline(ss, relation, ',');
-        id1 = std::stoi(relation);
-        std::getline(ss, relation, ',');
-        std::string relationType = relation;  // relation type
-        std::getline(ss, relation, ',');
-        id2 = std::stoi(relation);
-        std::getline(ss, relation, ',');
-        since = std::stoi(relation);
-        std::getline(ss, role); // role
-
-        // Create a unique key for the relation
-        auto key = std::make_tuple(id1, relationType, id2);
-        if (uniqueKeys.insert(key).second) { // Insert only if it was not present
+            // Generate "since" and "role" properties
+            int since = generateRandomSince();
+            std::string role = generateRandomRole();
+            
+            // Create the relation formatted as a string
+            std::string relationString = std::to_string(id1) + "," + relation + "," + std::to_string(id2) + "," + std::to_string(since) + "," + role;
             uniqueRelations.insert(relationString);  // Add the formatted relation to the set of relations
         }
     }
@@ -130,7 +131,7 @@ void writeUniqueRandomRelationsToCSV(const std::string& filename, int numRows, i
     }
 }
 
-void generate() {
+void generate(){
     // Parameters
     const int numNodes = 100000; // Number of nodes to generate
     const int numRows = 1000000; // Number of relations to generate

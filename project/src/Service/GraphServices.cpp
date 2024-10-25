@@ -11,7 +11,8 @@
 class GraphServices{
 public:
         
-      void load_relation_from_csv(const std::string& filename, Database& db) {
+    // Function to load relations from the CSV file
+    void load_relation_from_csv(const std::string& filename, Database& db) {
         auto start = std::chrono::high_resolution_clock::now();
 
         std::ifstream infile(filename);
@@ -28,13 +29,12 @@ public:
             Relationship relationship(id1, rel, id2);
             relationship.set_property("since", since); // Add "since" property
             relationship.set_property("as", role);     // Add "as" property
-            db.add_relation(relationship); // This will now build the adjacency list only
+            db.add_relation(relationship);
         }
         auto end = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> elapsed = end - start;
-        std::cout << "Load relations took: " << elapsed.count() << " seconds\n";
+        std::cout << "Time to upload relationship.csv: " << elapsed.count() << " seconds." << std::endl;
     }
-
 
     // Function to load nodes from the CSV file
     void load_node_from_csv(const std::string& filename, Database& db) {

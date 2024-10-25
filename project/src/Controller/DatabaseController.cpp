@@ -48,17 +48,17 @@ void Database::add_relation(const Relationship& rel) {
     }
 
     // Store the relationship in the database
-    std::string key = "r:" + rel.get_key_rel();
+    /*std::string key = "r:" + rel.get_key_rel();
     std::string value;
     for (const auto& prop : rel.get_properties()) {
         value += prop.first + " = " + prop.second + "; ";
-    }
+    }*/
 
- /*   status = db->Put(rocksdb::WriteOptions(), key, value);
+    /*status = db->Put(rocksdb::WriteOptions(), key, value);
     if (!status.ok()) {
         std::cerr << "Error saving relationship to database: " << status.ToString() << std::endl;
-    }
-*/
+    }*/
+
     // Build a single string for all properties
     std::string prop_string;
     for (const auto& prop : rel.get_properties()) {
@@ -71,7 +71,7 @@ void Database::add_relation(const Relationship& rel) {
     }
     
     // Call add_adj_list only once per relationship
-   add_adj_list(rel.get_key_src(), rel.get_key_dest(), lab_dest, rel.get_key_lab(), prop_string);
+    add_adj_list(rel.get_key_src(), rel.get_key_dest(), lab_dest, rel.get_key_lab(), prop_string);
 }
 
 //ADD ADJLIST
