@@ -35,29 +35,22 @@ void Database::add_node(const Node& node){
 
 // ADD_RELATION
 void Database::add_relation(const Relationship& rel) {
-    list.set_adj_list_node(rel.get_key_src());
+    //list.set_adj_list_node(rel.get_key_src());
 
-    std::string lab_dest;
-    std::string key_dest_lab = "n:" + rel.get_key_dest();
-    rocksdb::Status status = db->Get(rocksdb::ReadOptions(), key_dest_lab, &lab_dest);
-    
-    size_t pos = lab_dest.find("|");
-    if (pos != std::string::npos) {
-        std::string label = lab_dest.substr(0, pos);
-        lab_dest = label;
-    }
+    Node node = get_node(rel.get_key_dest());
+    std::string lab = node.get_label();
 
     // Store the relationship in the database
-    /*std::string key = "r:" + rel.get_key_rel();
+    std::string key = "r:" + rel.get_key_rel();
     std::string value;
     for (const auto& prop : rel.get_properties()) {
         value += prop.first + " = " + prop.second + "; ";
-    }*/
+    }
 
-    /*status = db->Put(rocksdb::WriteOptions(), key, value);
+    rocksdb::Status status = db->Put(rocksdb::WriteOptions(), key, value);
     if (!status.ok()) {
         std::cerr << "Error saving relationship to database: " << status.ToString() << std::endl;
-    }*/
+    }
 
     // Build a single string for all properties
     std::string prop_string;
@@ -71,7 +64,7 @@ void Database::add_relation(const Relationship& rel) {
     }
     
     // Call add_adj_list only once per relationship
-    add_adj_list(rel.get_key_src(), rel.get_key_dest(), lab_dest, rel.get_key_lab(), prop_string);
+    //add_adj_list(rel.get_key_src(), rel.get_key_dest(), lab, rel.get_key_lab(), prop_string);
 }
 
 //ADD ADJLIST

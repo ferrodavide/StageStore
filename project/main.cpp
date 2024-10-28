@@ -11,8 +11,15 @@ int main(int argc, char const *argv[])
     GraphServices g;
     g.load_node_from_csv("nodes.csv", data);
     g.load_relation_from_csv("relations.csv", data);
+    /*
+    std::cout<<std::endl;
+    std::cout<<std::endl;
+    std::cout<<std::endl;
+    std::cout<<std::endl;
+    std::cout<<std::endl;
+    std::cout<<std::endl;
     */
-    //data.print();
+    data.print();
     //call_test1(data);
    // call_test2(data);
     //call_test3(data);

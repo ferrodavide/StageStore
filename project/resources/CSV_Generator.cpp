@@ -18,13 +18,19 @@ int generateRandomHeight() {
     return rand() % 51 + 150; // Values between 150 and 200
 }
 
+std::string generateRandomLabel(){
+    std::vector<std::string> labels = {":User", ":Boss", ":Employee", ":Dipendent"};
+    return labels[rand() % labels.size()];
+}
+
 // Function to generate a random node with properties name and height
 std::string generateRandomNode(int id) {
     std::string name = generateRandomName();
     int height = generateRandomHeight();
-    
+    std::string label = generateRandomLabel();
+
     // CSV format: id,name,height
-    return std::to_string(id) + "," + name + "," + std::to_string(height);
+    return std::to_string(id) + "," + name + "," + std::to_string(height) + "," + label;
 }
 
 // Function to generate a random date (represented as years of relation)
@@ -69,7 +75,7 @@ void writeRandomNodesToCSV(const std::string& filename, int numNodes) {
 
     if (file.is_open()) {
         // Write the header of the CSV file
-        file << "id,name,height\n";
+        file << "id,name,height,label\n";
         // Generate and write each node
         for (int i = 1; i <= numNodes; ++i) {
             std::string node = generateRandomNode(i);
