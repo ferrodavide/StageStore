@@ -1,0 +1,25 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "(gdb) Debug Memory Dump",
+        "type": "cppdbg",
+        "request": "launch",
+        "program": "C:\\Users\\Davide\\Desktop\\StageStore\\project\\src.exe", 
+        "coreDumpPath": "C:\\Users\\Davide\\Desktop\\StageStore\\project\\prova.dump", 
+        "MIMode": "gdb",
+        "miDebuggerPath": "C:\\mingw\\bin\\gdb.exe", // Modifica con il percorso di GDB per Windows
+        "cwd": "${workspaceFolder}",
+        "setupCommands": [
+          {
+            "description": "Enable pretty-printing for gdb",
+            "text": "-enable-pretty-printing",
+            "ignoreFailures": true
+          }
+        ],
+        "environment": [],
+        "externalConsole": false,
+        "stopAtEntry": false
+      }
+    ]
+  }
