@@ -1,7 +1,7 @@
 #include "src/Entity/Database.hpp"
 #include <sstream>
 
-// Print methods
+// Print the database
 void Database::print(){
     rocksdb::Iterator* it = db->NewIterator(rocksdb::ReadOptions());
     for (it->SeekToFirst(); it->Valid(); it->Next()) {
@@ -9,10 +9,6 @@ void Database::print(){
     }
     assert(it->status().ok());
     delete it;
-}
-
-void Database::print_list(){
-    list.print();
 }
 
 // ADD NODE
@@ -33,93 +29,6 @@ void Database::add_node(const Node& node){
     }
 }
 
-// ADD_RELATION
-void Database::add_relation(const Relationship& rel) {
-    //list.set_adj_list_node(rel.get_key_src());
-
-    Node node = get_node(rel.get_key_dest());
-    std::string lab = node.get_label();
-
-    // Store the relationship in the database
-    std::string key = "r:" + rel.get_key_rel();
-    std::string value;
-    for (const auto& prop : rel.get_properties()) {
-        value += prop.first + " = " + prop.second + "; ";
-    }
-
-    rocksdb::Status status = db->Put(rocksdb::WriteOptions(), key, value);
-    if (!status.ok()) {
-        std::cerr << "Error saving relationship to database: " << status.ToString() << std::endl;
-    }
-
-    // Build a single string for all properties
-    std::string prop_string;
-    for (const auto& prop : rel.get_properties()) {
-        prop_string += prop.first + ";" + prop.second + ";";
-    }
-    
-    // Remove the last semicolon
-    if (!prop_string.empty()) {
-        prop_string.pop_back();
-    }
-    
-    // Call add_adj_list only once per relationship
-    //add_adj_list(rel.get_key_src(), rel.get_key_dest(), lab, rel.get_key_lab(), prop_string);
-}
-
-//ADD ADJLIST
-void Database::add_adj_list(std::string src, std::string id_d, std::string label_dest, std::string label_rel, std::string prop_string) {
-    std::string key = "a:" + src;
-    std::string check;
-    rocksdb::Status status = db->Get(rocksdb::ReadOptions(), key, &check);
-
-    // Build the new relation block
-    std::string new_block = "[" + id_d + ";" + label_dest + ";" + label_rel + ";" + prop_string + "]";
-
-    if (check.empty()) {
-        // If no adjacency list exists, create a new one
-        status = db->Put(rocksdb::WriteOptions(), key, new_block);
-        if (!status.ok()) {
-            std::cerr << "Error saving adjacency list to database: " << status.ToString() << std::endl;
-        }
-    } else {
-        // Check if a relationship with the same `id_d` and `label_rel` already exists
-        size_t pos = check.find("[" + id_d + ";" + label_dest + ";" + label_rel);
-        if (pos != std::string::npos) {
-            // If it exists, find the point to add the new properties
-            size_t end_pos = check.find("]", pos);
-            if (end_pos != std::string::npos) {
-                // Extract the existing part and add new properties to the existing relationship
-                std::string existing_block = check.substr(pos, end_pos - pos);
-                std::string updated_block = existing_block.substr(0, existing_block.length() - 1) + ";" + prop_string + "]";
-
-                // Replace the old block with the updated one
-                check.replace(pos, end_pos - pos + 1, updated_block);
-            }
-        } else {
-            // Check if a relationship with the same `id_d` but a different relationship label exists
-            size_t dest_pos = check.find("[" + id_d + ";" + label_dest);
-            if (dest_pos != std::string::npos) {
-                // If it exists, add the new relation (with a new label) to the same destination node
-                size_t end_block_pos = check.find("]", dest_pos);
-                if (end_block_pos != std::string::npos) {
-                    check.insert(end_block_pos, ";" + label_rel + ";" + prop_string);
-                }
-            } else {
-                // If no relationship with the same destination node exists, add a new relation block
-                check += new_block;
-            }
-        }
-
-        // Save the updated list
-        status = db->Put(rocksdb::WriteOptions(), key, check);
-        if (!status.ok()) {
-            std::cerr << "Error saving adjacency list to database: " << status.ToString() << std::endl;
-        }
-    }
-}
-
-//GETTERS
 Node Database::get_node(const std::string& id) {
     std::string key = "n:" + id;  // Format the key for nodes
     std::string value;
@@ -186,11 +95,49 @@ Relationship Database::get_relation(const std::string& id) {
     return relationship;
 }
 
-rocksdb::DB* Database::get_db() { return db; }
+/*  //NOT IMPLEMENTED YET
+Adjacency_List Database::get_adj_list(const std::string& id_src) {
+    std::string key = "a:" + id_src;  // Prepara la chiave per l'adiacenza
+    std::string value;
+    rocksdb::Status status = db->Get(rocksdb::ReadOptions(), key, &value);
+    
+    if (!status.ok()) {
+        std::cerr << "Error retrieving adjacency list: " << status.ToString() << std::endl;
+        return Adjacency_List();  // Restituisci una lista vuota in caso di errore
+    }
 
-//NOT IMPLEMENTED YET
-// get_adj_list()
+    Adjacency_List adj_list(id_src);  // Crea la lista di adiacenza per il nodo sorgente
 
+    // La lista di adiacenza è composta da blocchi racchiusi tra parentesi quadre
+    size_t pos = 0;
+    while ((pos = value.find('[')) != std::string::npos) {
+        size_t end_pos = value.find(']', pos);
+        std::string relation_block = value.substr(pos + 1, end_pos - pos - 1);  // Estrai il blocco della relazione
+        
+        std::istringstream block_stream(relation_block);
+        std::string target_node_id, label, relation_type;
+
+        // Estrai il nodo target, l'etichetta, e il tipo di relazione
+        std::getline(block_stream, target_node_id, ';');
+        std::getline(block_stream, label, ';');
+        std::getline(block_stream, relation_type, ';');
+        
+        Relationship relation(target_node_id, relation_type, id_src);  // Crea la relazione
+
+        // Estrai le proprietà (coppie chiave-valore)
+        std::string prop_key, prop_value;
+        while (std::getline(block_stream, prop_key, ';') && std::getline(block_stream, prop_value, ';')) {
+            relation.set_property(prop_key, prop_value);  // Assegna ogni proprietà alla relazione
+        }
+
+        adj_list.add_relationship(relation);  // Aggiungi la relazione alla lista di adiacenza
+
+        value = value.substr(end_pos + 1);  // Avanza alla prossima relazione nella stringa
+    }
+
+    return adj_list;
+}
+*/
 // DELETE
 void Database::delete_node(const string n_key){
     rocksdb::Status status = db->Delete(rocksdb::WriteOptions(), n_key);  
@@ -219,4 +166,100 @@ void Database::update_node(const std::string& key,const std::string& value){
     if (!status.ok()) {
         std::cerr << "Error updating node to database: " << status.ToString() << std::endl;
     }
+}
+
+// ADD_RELATION
+void Database::add_relation(const Relationship& rel) {
+    list.set_adj_list_node(rel.get_key_src());
+
+    std::string lab_dest;
+    std::string key_dest_lab = "n:" + rel.get_key_dest();
+    rocksdb::Status status = db->Get(rocksdb::ReadOptions(), key_dest_lab, &lab_dest);
+    
+    size_t pos = lab_dest.find("|");
+    if (pos != std::string::npos) {
+        std::string label = lab_dest.substr(0, pos);
+        lab_dest = label;
+    }
+
+    // Store the relationship in the database
+    std::string key = "r:" + rel.get_key_rel();
+    std::string value;
+    for (const auto& prop : rel.get_properties()) {
+        value += prop.first + " = " + prop.second + "; ";
+    }
+
+    status = db->Put(rocksdb::WriteOptions(), key, value);
+    if (!status.ok()) {
+        std::cerr << "Error saving relationship to database: " << status.ToString() << std::endl;
+    }
+
+    // Build a single string for all properties
+    std::string prop_string;
+    for (const auto& prop : rel.get_properties()) {
+        prop_string += prop.first + ";" + prop.second + ";";
+    }
+    
+    // Remove the last semicolon
+    if (!prop_string.empty()) {
+        prop_string.pop_back();
+    }
+    
+    // Call add_adj_list only once per relationship
+    add_adj_list(rel.get_key_src(), rel.get_key_dest(), lab_dest, rel.get_key_lab(), prop_string);
+}
+
+void Database::add_adj_list(std::string src, std::string id_d, std::string label_dest, std::string label_rel, std::string prop_string) {
+    std::string key = "a:" + src;
+    std::string check;
+    rocksdb::Status status = db->Get(rocksdb::ReadOptions(), key, &check);
+
+    // Build the new relation block
+    std::string new_block = "[" + id_d + ";" + label_dest + ";" + label_rel + ";" + prop_string + "]";
+
+    if (check.empty()) {
+        // If no adjacency list exists, create a new one
+        status = db->Put(rocksdb::WriteOptions(), key, new_block);
+        if (!status.ok()) {
+            std::cerr << "Error saving adjacency list to database: " << status.ToString() << std::endl;
+        }
+    } else {
+        // Check if a relationship with the same `id_d` and `label_rel` already exists
+        size_t pos = check.find("[" + id_d + ";" + label_dest + ";" + label_rel);
+        if (pos != std::string::npos) {
+            // If it exists, find the point to add the new properties
+            size_t end_pos = check.find("]", pos);
+            if (end_pos != std::string::npos) {
+                // Extract the existing part and add new properties to the existing relationship
+                std::string existing_block = check.substr(pos, end_pos - pos);
+                std::string updated_block = existing_block.substr(0, existing_block.length() - 1) + ";" + prop_string + "]";
+
+                // Replace the old block with the updated one
+                check.replace(pos, end_pos - pos + 1, updated_block);
+            }
+        } else {
+            // Check if a relationship with the same `id_d` but a different relationship label exists
+            size_t dest_pos = check.find("[" + id_d + ";" + label_dest);
+            if (dest_pos != std::string::npos) {
+                // If it exists, add the new relation (with a new label) to the same destination node
+                size_t end_block_pos = check.find("]", dest_pos);
+                if (end_block_pos != std::string::npos) {
+                    check.insert(end_block_pos, ";" + label_rel + ";" + prop_string);
+                }
+            } else {
+                // If no relationship with the same destination node exists, add a new relation block
+                check += new_block;
+            }
+        }
+
+        // Save the updated list
+        status = db->Put(rocksdb::WriteOptions(), key, check);
+        if (!status.ok()) {
+            std::cerr << "Error saving adjacency list to database: " << status.ToString() << std::endl;
+        }
+    }
+}
+
+void Database::print_list(){
+    list.print();
 }

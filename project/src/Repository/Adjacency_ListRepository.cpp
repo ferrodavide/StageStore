@@ -47,7 +47,6 @@ void Adjacency_List::set_adj_list_relationship(const string& id_s, const string&
     }
 }
 
-//add new cell to the list
 void Adjacency_List::append(const std::string& id_s){
     adj_p new_node = new adj(id_s);
     if (head == nullptr) {
@@ -97,3 +96,4 @@ void Adjacency_List::print() const {
         current = current->next;
     }
 }
+

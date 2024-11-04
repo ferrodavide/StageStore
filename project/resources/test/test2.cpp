@@ -3,9 +3,6 @@
 #include <iostream>
 #include <chrono>
 
-/*
-Search for the adjacency list of a specific node (node_id) in the database and return it.
-*/
 void find_adjacency_list(Database& database, const std::string& node_id) {
     // Get the RocksDB database pointer from the Database class
     auto start = std::chrono::high_resolution_clock::now();

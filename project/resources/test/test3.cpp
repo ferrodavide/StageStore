@@ -3,10 +3,6 @@
 #include <iostream>
 #include <chrono>
 
-/*
-Scans and reads the entire contents of the database, i.e. all stored keys and values.
-*/
-
 void read_entire_graph(Database& database) {
     auto start = std::chrono::high_resolution_clock::now();
     // Retrieve the RocksDB pointer

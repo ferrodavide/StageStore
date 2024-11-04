@@ -37,26 +37,39 @@ public:
         }
         delete it;
     }
-
     void delete_node(const std::string n_key);
     void delete_relationship(const std::string r_key);
     void delete_adjacency_list(const std::string al_key);
 
     void add_node(const Node& node);
     void add_relation(const Relationship& rel);
-    void add_adj_list(std::string src,string id_d ,string label_dest, string label_rel, string prop_strings);
+    //void add_adj_list(const Adjacency_List& adj);
+    void add_adj_list(std::string src,string id_d ,string label_dest, string label_rel, string prop_strings);   //prova
 
     void update_node(const std::string& key,const std::string& value);
 
+
     Node get_node(const std::string& id);
     Relationship get_relation(const std::string& id);
-    //NOT IMPLEMENTED YET
     Adjacency_List get_adj_list(const std::string& id_src);
+    rocksdb::DB* get_db() {
+        return db;  // Assicurati che db sia un membro della classe Database
+    }
 
-    rocksdb::DB* get_db();
+    //not implemented yet
+    /*
+    Relationship get_relation(const std::string& id_src, std::string& rel_label, std::string& id_dest);*/
+    //Adjacency get_adj_list(const std::string& id_src);
 
     void print();
     void print_list();
+
+    std::string query_get(const std::string& chiave){
+        std::string valore_nodo;
+        rocksdb::Status status = db->Get(rocksdb::ReadOptions(), chiave, &valore_nodo);
+
+        return valore_nodo;
+    }
 
 private:
     rocksdb::DB* db;

@@ -3,9 +3,6 @@
 #include <iostream>
 #include <chrono>
 
-/*
-Query to find all outgoing relationships of a specific node (node_id).
-*/
 void find_relationships_starting_with(Database& database, const std::string& node_id) {
     // Get the pointer to the RocksDB database from the Database class
  auto start = std::chrono::high_resolution_clock::now();

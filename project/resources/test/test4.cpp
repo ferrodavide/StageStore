@@ -3,10 +3,6 @@
 #include <iostream>
 #include <chrono>
 
-/*
-Finds all nodes that have a specific property with a certain value in the database.
-*/
-
 void filter_nodes_by_property(Database& database, const std::string& property_key, const std::string& property_value) {
     auto start = std::chrono::high_resolution_clock::now();
     

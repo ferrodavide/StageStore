@@ -21,7 +21,6 @@ public:
     std::string get_id() const;
     std::string get_label() const;
     std::unordered_map<std::string, std::string> get_properties() const;
-    
 private:
     std::string id;
     std::string label;
